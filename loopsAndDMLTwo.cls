@@ -7,11 +7,8 @@ public with sharing class loopsAndDMLTwo {
         // Process exception here
         }
 
-
-        Account a = new Account(Name='Acme2');
-        insert(a);
         
-        Account myAcct = [SELECT Id, Name, BillingCity FROM Account WHERE Id = :a.Id];
+        Account myAcct = [SELECT Id, Name, BillingCity FROM Account WHERE Id = :newAcct.Id];
         myAcct.BillingCity = 'San Francisco'; 
         
         try {
@@ -19,10 +16,6 @@ public with sharing class loopsAndDMLTwo {
         } catch (DmlException e) {
             // Process exception here
         }
-
-
-        upsert sObjectList Account.Fields.MyExternalId__c;
-
 
         List<Account> acctList = new List<Account>();
         // Fill the accounts list with some accounts
@@ -35,7 +28,7 @@ public with sharing class loopsAndDMLTwo {
 
 
         Account[] doomedAccts = [SELECT Id, Name FROM Account 
-        WHERE Name = 'DotCom']; 
+        WHERE Name = 'Acme']; 
         try {
             delete doomedAccts;
             } catch (DmlException e) {
@@ -43,7 +36,7 @@ public with sharing class loopsAndDMLTwo {
         }
 
 
-        Account[] savedAccts = [SELECT Id, Name FROM Account WHERE Name = 'Universal Containers' ALL ROWS]; 
+        Account[] savedAccts = [SELECT Id, Name FROM Account WHERE Name = 'Acme' ALL ROWS]; 
         try {
             undelete savedAccts;
         } catch (DmlException e) {
@@ -51,8 +44,9 @@ public with sharing class loopsAndDMLTwo {
         }
 
 
-        List<Account> ls = new List<Account>{new Account(name='Acme Inc.'),new Account(name='Acme')};
+        List<Account> ls = new List<Account>{new Account(name='Acme Inc.'),new Account(name='Acme Corp.')};
         insert ls;
+        
         Account masterAcct = [SELECT Id, Name FROM Account WHERE Name = 'Acme Inc.' LIMIT 1];
         Account mergeAcct = [SELECT Id, Name FROM Account WHERE Name = 'Acme' LIMIT 1];
         try {
